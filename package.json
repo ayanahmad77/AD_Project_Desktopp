@@ -1,0 +1,17 @@
+{
+  "name": "athenaaa",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "postinstall": "cd frontend && npm install && cd ../backend && npm install",
+    "build": "cd frontend && npm run build",
+    "dev": "concurrently --kill-others --names backend,vite \"cd backend && npm start\" \"cd frontend && npm run dev\"",
+    "electron": "cd frontend && npx electron ./app/app.js"
+  }
+}
