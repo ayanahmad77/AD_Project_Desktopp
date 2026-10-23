@@ -1,57 +1,170 @@
 [
   {
     "id": 1,
-    "question": "Which Electron process is responsible for creating BrowserWindow?",
+    "question": "A file named report.js contains exactly one line of text: print('hello'). A student runs python3 report.js in the terminal. What is the result?",
     "options": [
-      "Renderer Process",
-      "Main Process",
-      "React Process",
-      "Preload Process"
+      "It prints hello with no error",
+      "An error — python3 rejects .js files",
+      "Node.js runs it instead of Python as the extension is .js",
+      "The shell reports command not found"
     ],
-    "correctAnswer": 1
+    "correctAnswer": 1,
+    "explanation": "The extension is metadata for humans and GUI applications. The interpreter reads the bytes inside the file, not the filename."
   },
   {
     "id": 2,
-    "question": "Which Electron API is commonly used in the renderer to invoke a handler in the main process?",
+    "question": "A Node.js program prints a prompt, reads one line using readline, prints the answer inside the callback, and never calls rl.close(). What happens after the answer is printed?",
     "options": [
-      "ipcRenderer.invoke",
-      "BrowserWindow.loadURL",
-      "fs.writeFileSync",
-      "dialog.showMessageBox"
+      "The process exits, and readline is cleaned up automatically",
+      "The process crashes because the callback has already executed",
+      "The process keeps running",
+      "The process exits, but the prompt appears once more"
     ],
-    "correctAnswer": 0
+    "correctAnswer": 2,
+    "explanation": "The readline interface remains open and continues listening for input. Therefore, the Node.js process does not exit automatically."
   },
   {
     "id": 3,
-    "question": "Why is a preload script commonly used in Electron?",
+    "question": "A Node program spawns afplay as a child process and a song is playing. From a second terminal, the Node process is killed with kill. What happens to afplay?",
     "options": [
-      "To style the React application",
-      "To expose controlled APIs safely to the renderer",
-      "To create the Express server",
-      "To replace the main process"
+      "It is killed too, since children die with parents",
+      "It is paused until another process adopts it",
+      "It restarts because the operating system respawns lost children",
+      "It keeps running, orphaned without its parent"
     ],
-    "correctAnswer": 1
+    "correctAnswer": 3,
+    "explanation": "Killing a parent does not automatically kill its children. Proper cleanup requires listening for the exit event and deliberately terminating the child process."
   },
   {
     "id": 4,
-    "question": "Which HTTP method is normally used to fetch exam questions?",
+    "question": "A CLI tool prints a prompt to the screen and then waits for the user to type an answer. Which stream carries each direction?",
     "options": [
-      "GET",
-      "DELETE",
-      "PATCH",
-      "CONNECT"
+      "Prompt through stdin; the answer through stdout",
+      "Prompt through stdout; the answer through stdin",
+      "Prompt and answer both travel through stdin only",
+      "Prompt and answer both travel through stdout only"
     ],
-    "correctAnswer": 0
+    "correctAnswer": 1,
+    "explanation": "Standard output is the process's output stream, while standard input is its input stream. The prompt is written through stdout, and the user's answer is received through stdin."
   },
   {
     "id": 5,
-    "question": "What does fs.writeFileSync() do?",
+    "question": "A CLI reads from stdin and logs the value twice: process.stdin.on('data', (input) => { console.log(input); console.log(input.toString()); }); The user types 12 and presses Enter. What do the two lines show?",
     "options": [
-      "Reads camera frames",
-      "Writes data to a file and waits until it finishes",
-      "Starts the Electron renderer",
-      "Sends an IPC event"
+      "Raw data on the first line, readable text on the second",
+      "Readable text on the first line, raw bytes on the second",
+      "Readable text on both lines, since logging always decodes",
+      "Raw data on both lines, since logging prints them literally"
     ],
-    "correctAnswer": 1
+    "correctAnswer": 0,
+    "explanation": "Stream data arrives as a Buffer, which is a container of raw bytes. Logging it directly shows its byte representation, while toString() decodes those bytes into readable characters."
+  },
+  {
+    "id": 6,
+    "question": "Which Electron API does the main process use to create an application window?",
+    "options": [
+      "ipcMain",
+      "BrowserWindow",
+      "app",
+      "autoUpdater"
+    ],
+    "correctAnswer": 1,
+    "explanation": "The main process creates a window with new BrowserWindow(options). The other APIs serve different purposes."
+  },
+  {
+    "id": 7,
+    "question": "An Electron application creates two BrowserWindow instances, each loading its own page. Which statement best describes the usual process arrangement?",
+    "options": [
+      "Both pages execute inside the main process",
+      "Both windows always share one renderer process",
+      "Each window has its own renderer process",
+      "Each window starts another Electron main process"
+    ],
+    "correctAnswer": 2,
+    "explanation": "Electron ordinarily creates a separate renderer process for each BrowserWindow. The application still has a main process that manages the windows."
+  },
+  {
+    "id": 8,
+    "question": "The main process displays exam rules: const result = await dialog.showMessageBox({ message: 'Accept the exam rules?', buttons: ['Accept', 'Cancel'], defaultId: 0, cancelId: 1 }); if (result === 0) { startExam(); } A student clicks Accept, but startExam() does not run. Why?",
+    "options": [
+      "defaultId changes Accept's index to 1",
+      "The dialog returns Accept as a string",
+      "result is an object containing response: 0",
+      "cancelId prevents either button from responding"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The asynchronous showMessageBox() result is an object. The condition should check result.response === 0."
+  },
+  {
+    "id": 9,
+    "question": "A BrowserWindow is configured to load a preload script containing console.log('Preload bridge script executing safely'). Assume the preload script loads successfully, the Electron window's DevTools are open, and no custom logging or forwarding is configured. Where can its console.log() message normally be inspected?",
+    "options": [
+      "Only in the terminal running the Electron main process",
+      "Only in the terminal running the Vite development server",
+      "In the active Electron window's Chromium DevTools console",
+      "In the DevTools console of an unrelated browser tab"
+    ],
+    "correctAnswer": 2,
+    "explanation": "The preload script runs in the window's web contents before the page's scripts. Its console output is associated with that Electron window."
+  },
+  {
+    "id": 10,
+    "question": "An Electron app has an exam window and an admin window. The main process needs to notify only the exam window that time has expired. Which call targets the intended renderer?",
+    "options": [
+      "ipcMain.send('time-up')",
+      "ipcRenderer.send('time-up')",
+      "adminWindow.webContents.send('time-up')",
+      "examWindow.webContents.send('time-up')"
+    ],
+    "correctAnswer": 3,
+    "explanation": "The main process sends to a particular renderer through that window's webContents. Sending through adminWindow would target the wrong window."
+  },
+  {
+    "id": 11,
+    "question": "A developer writes this preload code: contextBridge.exposeInMainWorld('electronAPI', { send: (channel, data) => ipcRenderer.send(channel, data) }); The React page can choose any channel string. Which change best limits what the page can request?",
+    "options": [
+      "Expose only named functions with fixed IPC channels",
+      "Rename send to sendSecurely",
+      "Move the same function into a React component",
+      "Change ipcRenderer.send() to console.log()"
+    ],
+    "correctAnswer": 0,
+    "explanation": "A function such as submitExam(data) can use a fixed, intended channel. Merely renaming or relocating a generic sender does not restrict the renderer's IPC access."
+  },
+  {
+    "id": 12,
+    "question": "A camera capture returns a Blob in the renderer: const blob = await imageCapture.takePhoto(); const arrayBuffer = await blob.arrayBuffer(); The ArrayBuffer reaches an IPC handler in the main process, where Node.js will write the image to disk. Which operation produces a Node.js Buffer from those bytes?",
+    "options": [
+      "Buffer.from(arrayBuffer)",
+      "JSON.stringify(arrayBuffer)",
+      "String(arrayBuffer)",
+      "Date.now(arrayBuffer)"
+    ],
+    "correctAnswer": 0,
+    "explanation": "Buffer.from(arrayBuffer) gives Node.js a byte buffer suitable for writing. Converting the object to a string would not preserve the image bytes as intended."
+  },
+  {
+    "id": 13,
+    "question": "A terminal application needs to print text repeatedly on the same line without automatically moving the cursor to the next line. Which approach is more suitable?",
+    "options": [
+      "Use console.log()",
+      "Use process.stdout.write()",
+      "Use process.stdout.type()",
+      "Use console.clear()"
+    ],
+    "correctAnswer": 1,
+    "explanation": "console.log() automatically appends a newline. process.stdout.write() does not automatically add one, giving a terminal application precise control over output."
+  },
+  {
+    "id": 14,
+    "question": "A Node.js program needs to react immediately whenever a user presses a key, without waiting for Enter to be pressed. Which terminal/input mode should the program use?",
+    "options": [
+      "Cooked mode, because the terminal buffers each keystroke",
+      "Raw mode, because the program receives bytes immediately",
+      "Cooked mode, because it disables terminal preprocessing",
+      "Simple mode, because the terminal converts bytes into full lines"
+    ],
+    "correctAnswer": 1,
+    "explanation": "In raw mode, keystrokes are delivered to the program immediately as raw bytes. In cooked mode, the terminal buffers input and normally provides it after Enter is pressed."
   }
 ]
